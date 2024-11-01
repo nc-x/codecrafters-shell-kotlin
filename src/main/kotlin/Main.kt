@@ -74,7 +74,15 @@ fun handleCommands(input: String) {
                 println("invalid arguments")
                 return
             }
-            val path = Path(args[0]).let { if (it.isAbsolute) it else Path("$workingDirectory/${args[0]}") }
+
+            val path = Path(
+                if (args[0].startsWith("~")) {
+                    System.getenv("HOME") + args[0].removePrefix("~")
+                } else {
+                    args[0]
+                }
+            ).let { if (it.isAbsolute) it else Path("$workingDirectory/$it") }
+
             if (path.exists() && path.isDirectory()) {
                 workingDirectory = path.normalize().absolutePathString()
             } else {
