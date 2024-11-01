@@ -51,7 +51,18 @@ fun handleCommands(input: String) {
         }
 
         is Unknown -> {
-            println("${cmd.value}: command not found")
+            val location = findInPath(cmd.value)
+            if (location != null) {
+                val process = ProcessBuilder(listOf(location, *args.toTypedArray())).start()
+                process.inputStream.bufferedReader().use { reader ->
+                    for (line in reader.lines()) {
+                        println(line)
+                    }
+                }
+                process.waitFor()
+            } else {
+                println("${cmd.value}: command not found")
+            }
         }
     }
 }
