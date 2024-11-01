@@ -8,12 +8,17 @@ fun main() {
     }
 }
 
-fun handleCommands(cmd: String) {
-    val (cmd, args) = cmd.split("\\s+".toRegex()).let {
+fun handleCommands(input: String) {
+    val (cmd, args) = input.split("\\s+".toRegex()).let {
         it[0] to it.drop(1)
     }
     when (cmd) {
         "" -> {}
+
+        "echo" -> {
+            println(input.substringAfter("echo "))
+        }
+
         "exit" -> {
             if (args.size != 1 || args[0].toIntOrNull() == null) {
                 println("invalid arguments")
