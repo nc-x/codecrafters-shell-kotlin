@@ -1,4 +1,7 @@
 fun main() {
-    print("$ ")
-    readln()
+    while (true) {
+        print("$ ")
+        val cmd = readln()
+        println("$cmd: command not found")
+    }
 }
