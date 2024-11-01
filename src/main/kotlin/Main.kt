@@ -7,6 +7,7 @@ import Command.Type
 import Command.Unknown
 import java.io.File
 import kotlin.io.path.Path
+import kotlin.io.path.absolutePathString
 import kotlin.io.path.exists
 import kotlin.io.path.isDirectory
 import kotlin.system.exitProcess
@@ -73,9 +74,9 @@ fun handleCommands(input: String) {
                 println("invalid arguments")
                 return
             }
-            val path = Path(args[0])
+            val path = Path(args[0]).let { if (it.isAbsolute) it else Path("$workingDirectory/${args[0]}") }
             if (path.exists() && path.isDirectory()) {
-                workingDirectory = args[0]
+                workingDirectory = path.normalize().absolutePathString()
             } else {
                 println("cd: ${args[0]}: No such file or directory")
             }
