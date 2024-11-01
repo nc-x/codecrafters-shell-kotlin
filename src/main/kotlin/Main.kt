@@ -1,3 +1,4 @@
+import Command.Cd
 import Command.Echo
 import Command.Exit
 import Command.None
@@ -5,7 +6,12 @@ import Command.Pwd
 import Command.Type
 import Command.Unknown
 import java.io.File
+import kotlin.io.path.Path
+import kotlin.io.path.exists
+import kotlin.io.path.isDirectory
 import kotlin.system.exitProcess
+
+var workingDirectory = "."
 
 fun main() {
     while (true) {
@@ -19,6 +25,7 @@ fun handleCommands(input: String) {
     val (cmd, args) = input.split("\\s+".toRegex()).let {
         Command.from(it[0]) to it.drop(1)
     }
+
 
     when (cmd) {
         None -> {}
@@ -56,8 +63,22 @@ fun handleCommands(input: String) {
                 println("unexpected arguments.")
                 return
             }
-            val pwd = File(".").absolutePath
-            println(pwd.substring(0, pwd.length - 2))
+            val pwd = File(workingDirectory).canonicalPath
+            println(pwd)
+
+        }
+
+        Cd -> {
+            if (args.size != 1) {
+                println("invalid arguments")
+                return
+            }
+            val path = Path(args[0])
+            if (path.exists() && path.isDirectory()) {
+                workingDirectory = args[0]
+            } else {
+                println("cd: ${args[0]}: No such file or directory")
+            }
         }
 
         is Unknown -> {
@@ -93,6 +114,7 @@ sealed class Command(val value: String) {
     object Exit : Command("exit")
     object Type : Command("type")
     object Pwd : Command("pwd")
+    object Cd : Command("cd")
     class Unknown(value: String) : Command(value)
 
     companion object {
