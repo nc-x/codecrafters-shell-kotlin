@@ -1,6 +1,7 @@
 import Command.Echo
 import Command.Exit
 import Command.None
+import Command.Pwd
 import Command.Type
 import Command.Unknown
 import java.io.File
@@ -50,6 +51,15 @@ fun handleCommands(input: String) {
             println(message)
         }
 
+        Pwd -> {
+            if (args.isNotEmpty()) {
+                println("unexpected arguments.")
+                return
+            }
+            val pwd = File(".").absolutePath
+            println(pwd.substring(0, pwd.length - 2))
+        }
+
         is Unknown -> {
             val location = findInPath(cmd.value)
             if (location != null) {
@@ -82,6 +92,7 @@ sealed class Command(val value: String) {
     object Echo : Command("echo")
     object Exit : Command("exit")
     object Type : Command("type")
+    object Pwd : Command("pwd")
     class Unknown(value: String) : Command(value)
 
     companion object {
